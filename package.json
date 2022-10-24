@@ -1,6 +1,6 @@
 {
   "name": "@data-fair/processings-test-utils",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Util functions to help in testing and developing data-fair processings.",
   "main": "index.js",
   "scripts": {
