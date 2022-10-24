@@ -83,14 +83,19 @@ exports.ws = (config, log) => {
       const _timeout = setTimeout(() => reject(new Error('timeout')), timeout)
       log.debug('subscribe to channel', channel)
       ws._ws.send(JSON.stringify({ type: 'subscribe', channel, apiKey: config.dataFairAPIKey }))
-      ws.once('message', (message) => {
+      const messageCb = (message) => {
         if (message.channel && message.channel !== channel) return
         clearTimeout(_timeout)
         log.debug('received response to subscription', message)
-        if (message.type === 'error') return reject(new Error(message))
-        else if (message.type === 'subscribe-confirm') return resolve()
-        else return reject(new Error('expected a subscription confirmation, got ' + JSON.stringify(message)))
-      })
+        if (message.type === 'error') {
+          ws.off('message', messageCb)
+          return reject(new Error(message))
+        } else if (message.type === 'subscribe-confirm') {
+          ws.off('message', messageCb)
+          return resolve()
+        }
+      }
+      ws.on('message', messageCb)
       if (ws._channels.includes(channel)) ws._channels.push(channel)
     })
   }
