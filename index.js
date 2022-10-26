@@ -17,9 +17,13 @@ exports.log = (debug) => {
     },
     task: (name) => {
       tasksDraftLog[name] = console.draft()
+      tasksDraftLog[name](chalk.yellow(name))
     },
     progress: (taskName, progress, total) => {
-      tasksDraftLog[taskName](`${taskName} - ${progress} / ${total}`)
+      const msg = `${taskName} - ${progress} / ${total}`
+      if (progress === 0) tasksDraftLog[taskName](chalk.yellow(msg))
+      else if (progress >= total) tasksDraftLog[taskName](chalk.green(msg))
+      else tasksDraftLog[taskName](chalk.green.bold(msg))
     }
   }
 }
