@@ -115,7 +115,9 @@ exports.ws = (config, log) => {
   }
   ws.waitForJournal = async (datasetId, eventType, timeout = 300000) => {
     log.info(`attend l'évènement du journal ${datasetId} / ${eventType}`)
-    return ws.waitFor(`datasets/${datasetId}/journal`, (e) => e.type === eventType, timeout)
+    const event = await ws.waitFor(`datasets/${datasetId}/journal`, (e) => e.type === eventType || e.type === 'error', timeout)
+    if (event.type === 'error') throw new Error(event.data)
+    return event
   }
   return ws
 }
