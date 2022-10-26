@@ -3,7 +3,9 @@ const chalk = require('chalk')
 const dayjs = require('dayjs')
 const axios = require('axios')
 const WebSocket = require('ws')
+require('draftlog').into(console).addLineListener(process.stdin)
 
+const tasksDraftLog = {}
 exports.log = (debug) => {
   return {
     step: (msg) => console.log(chalk.blue.bold.underline(`[${dayjs().format('LTS')}] ${msg}`)),
@@ -12,6 +14,12 @@ exports.log = (debug) => {
     info: (msg, extra) => console.log(chalk.blue(`[${dayjs().format('LTS')}] ${msg}`), extra),
     debug: (msg, extra) => {
       if (debug) console.log(`[${dayjs().format('LTS')}] debug - ${msg}`, extra)
+    },
+    task: (name) => {
+      tasksDraftLog[name] = console.draft()
+    },
+    progress: (taskName, progress, total) => {
+      tasksDraftLog[taskName](`${taskName} - ${progress} / ${total}`)
     }
   }
 }
