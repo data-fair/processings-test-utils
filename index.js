@@ -159,6 +159,7 @@ exports.context = (initialContext, config, debug, testDebug) => {
   context.log = exports.log(debug, testDebug)
   context.axios = exports.axios(config)
   context.ws = exports.ws(config, context.log)
+  context.sendMail = async (mail) => context.log.testInfo('send email', mail)
   let createdDataset
   context.patchConfig = async (patch) => {
     context.log.testInfo('received config patch', patch)
